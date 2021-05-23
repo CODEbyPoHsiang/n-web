@@ -1,6 +1,7 @@
 <?php
     // http_response_code(401);
  header("Content-type: text/html; charset=utf-8");
+//  header('Content-Type: application/json');
 
  //取得使用者ip
  $remote_addr=$_SERVER["REMOTE_ADDR"];
@@ -86,7 +87,6 @@ $db=DB::getInstance();
      /* ---------------------------------------------------
         SummerNote
     ----------------------------------------------------- */
-
     .note-editable { 
         font-family: 'Poppins' !important; 
         font-size: 15px !important; 
@@ -125,7 +125,7 @@ $db=DB::getInstance();
             <div class="modal-header">
                 <h4 class="modal-title">Create New Records</h4>
             </div>
-            <from>
+            <from id="form_data">
                 <div class="modal-body">
                     <label>類型</label>
                     <select name="category" id="category" class="form-control">
@@ -197,6 +197,7 @@ $db=DB::getInstance();
 <script src="./js/plugins/moment.min.js"></script>
 <script src="./js/plugins/bootstrap-datetimepicker.js"></script>
 <script>
+
 //日期選擇器
 // datetimepicker init
 $('.datetimepicker').datetimepicker({
@@ -215,7 +216,6 @@ $('.datetimepicker').datetimepicker({
 });
 
 //sunmmer note 編輯器設置
-
 $(document).ready(function() {
     $('.note-editable').trigger('focus');
   $('#content').summernote({
@@ -238,10 +238,7 @@ $(document).ready(function() {
 
 });
 
-
-
-
-
+// Ajax crud news/event
 $(document).ready(function() {
     fetchUser();
     function fetchUser() {
@@ -326,7 +323,7 @@ $(document).ready(function() {
                     id: id,
                     action: action
                 },
-                success: function(data) {
+                success: function(data, status, xhr) {
                     if (action == "Create") {
                         Swal.fire({
                             type: 'success',
@@ -348,6 +345,20 @@ $(document).ready(function() {
                         'hide');
                     fetchUser
                         ();
+                },
+                error: function(xhr, textStatus, error){
+                    console.log(xhr.statusText);
+                    // console.log(textStatus);
+                    // console.log(error);
+                    if(xhr.statusText === "Request Entity Too Large"){
+                        Swal.fire({
+                            type: 'warning',
+                            title: '你上傳的圖片已超過限制!',
+                            text:'圖片允許的最大尺寸：800X600',
+                            showConfirmButton: false,
+                            timer: 2000
+                        }) 
+                    }
                 }
             });
         }
@@ -415,7 +426,21 @@ $(document).ready(function() {
                 //     .content);
                 //編輯器從response拿值
                 $('#content').summernote('code',data.content);
-            }
+            },
+            error: function(xhr, textStatus, error){
+                    console.log(xhr.statusText);
+                    console.log(textStatus);
+                    console.log(error);
+                    if(xhr.statusText === "Request Entity Too Large"){
+                        Swal.fire({
+                            position: 'top-end',
+                            type: 'warning',
+                            title: '你上傳的圖片已超過限制!',
+                            showConfirmButton: false,
+                            timer: 2000
+                        }) //編輯成功彈出的提示視窗
+                    }
+                }
         });
     });
     //點選詳細按鈕
