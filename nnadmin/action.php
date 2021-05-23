@@ -103,7 +103,8 @@ if (isset($_POST["action"])) {
         $statement->execute();
         $result = $statement->fetchAll();
         $output = '';
-        
+        // echo '<img src ="data:image/jpeg;base64,'.base64_encode($blobimg).'"/>';
+
         foreach ($result as $row) {
             // if ($row["is_show"] =="Yes") {
             //     $is_show = "顯示";
@@ -113,6 +114,7 @@ if (isset($_POST["action"])) {
         
             
             $output .= '
+            
             <table class="table table-bordered table-striped" >
             <tr>
             <th colspan= 2 bgcolor="#5B5B5B">內容</td>
